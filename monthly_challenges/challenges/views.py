@@ -1,23 +1,37 @@
-from modulefinder import ReplacePackage
-from django.http import HttpResponse, HttpResponseNotFound, response
 from django.shortcuts import render
-from django.http import HttpResponse
-# Create your views here.
-options={'January':"Eat no meat for the entire month", 
-         'February':"walk for at least 20 minutes every day!", 
-         'March':'Learn django for at lest 20 minutes every day!', 
-         'April':"Eat no meat for the entire month", 
-         'May':"walk for at least 20 minutes every day!", 
-         'June':'Learn django for at lest 20 minutes every day!', 
-         'July':"Eat no meat for the entire month",
-         'August':"walk for at least 20 minutes every day!",
-         'September':'Learn django for at lest 20 minutes every day!', 
-         'October':"Eat no meat for the entire month",
-         'November':"walk for at least 20 minutes every day!",
-         'December':'Learn django for at lest 20 minutes every day!'}
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 
-def month_challenge(req,month):
-    if month in options:
-        return HttpResponse(options[month])
-    else:
-        return HttpResponseNotFound("this month is not supported!")
+monthly_challenges = {
+    "january": "Eat no meat for the entire month!",
+    "february": "Walk for at least 20 minutes every day!",
+    "march": "Learn Django for at least 20 minutes every day!",
+    "april": "Eat no meat for the entire month!",
+    "may": "Walk for at least 20 minutes every day!",
+    "june": "Learn Django for at least 20 minutes every day!",
+    "july": "Eat no meat for the entire month!",
+    "august": "Walk for at least 20 minutes every day!",
+    "september": "Learn Django for at least 20 minutes every day!",
+    "october": "Eat no meat for the entire month!",
+    "november": "Walk for at least 20 minutes every day!",
+    "december": "Learn Django for at least 20 minutes every day!"
+}
+
+# Create your views here.
+
+
+def monthly_challenge_by_number(request, month):
+    months = list(monthly_challenges.keys())
+
+    if month > len(months):
+        return HttpResponseNotFound("Invalid month")
+
+    redirect_month = months[month - 1]
+    return HttpResponseRedirect("/challenges/" + redirect_month)
+
+
+def monthly_challenge(request, month):
+    try:
+        challenge_text = monthly_challenges[month]
+        return HttpResponse(challenge_text)
+    except:
+        return HttpResponseNotFound("This month is not supported!")
